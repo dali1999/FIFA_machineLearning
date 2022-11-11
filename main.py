@@ -5,5 +5,10 @@ print(stats.shape)
 overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
 print(overall)
 print(overall.shape)
-print('taehwan')
-print('황경수')
+
+#경기출전수 appearance
+x1_data = np.array()
+for i in range(len(stats)+1):
+    x1_data[i] = stats[:,0]
+
+print(x1_data)
