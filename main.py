@@ -6,3 +6,4 @@ overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=i
 print(overall)
 print(overall.shape)
 print('taehwan')
+print('황경수')
