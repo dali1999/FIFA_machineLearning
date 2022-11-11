@@ -5,3 +5,5 @@ print(stats.shape)
 overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
 print(overall)
 print(overall.shape)
+
+print('변경됨?')
