@@ -1,12 +1,18 @@
 from numpy import genfromtxt
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 stats = genfromtxt('stats.csv', delimiter=',', encoding='utf-8-sig')
 print(stats)
 print(stats.shape)
 overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
 print(overall)
 print(overall.shape)
+
+#overall
+y_data = []
+for i in range(overall.shape[0]):
+    y_data.append(overall[i])
 
 #경기출전수 appearance
 x1_data = []
@@ -66,6 +72,8 @@ x6_data = np.array(x6_data)
 x7_data = np.array(x7_data)
 x8_data = np.array(x8_data)
 
+y_data = np.array(y_data)
+
 x1 = tf.placeholder(tf.float32)
 x2 = tf.placeholder(tf.float32)
 x3 = tf.placeholder(tf.float32)
@@ -89,5 +97,15 @@ b = tf.Variable(tf.random_normal([1]), name = 'bias')
 
 hypothesis = x1*w1 + x2*w2 + x3*w3 + x4*w4 + x5*w5 + x6*w6 + x7*w7 + x8*w8 + b
 
+cost = tf.reduce_mean(tf.square(hypothesis-y))
+optimizer = tf.train.GradientDescentOptimizer(learning_rate = 1e-5)
+train = optimizer.minimize(cost)
 
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+for step in range(20000):
+    cost_val, hyp_val, _ = sess.run([cost, hypothesis, train],
+                                    feed_dict={x1:x1_data, x2:x2_data, x3:x3_data, x4:x4_data, x5:x5_data, x6:x6_data, x7:x7_data, x8:x8_data, y:y_data})
+    if step % 10000 == 0:
+        print(step, "cost : ", cost_val, "\nPrediction:\n", hyp_val)
 
