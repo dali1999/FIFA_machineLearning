@@ -103,9 +103,9 @@ train = optimizer.minimize(cost)
 
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
-for step in range(20000):
+for step in range(2000):
     cost_val, hyp_val, _ = sess.run([cost, hypothesis, train],
                                     feed_dict={x1:x1_data, x2:x2_data, x3:x3_data, x4:x4_data, x5:x5_data, x6:x6_data, x7:x7_data, x8:x8_data, y:y_data})
-    if step % 10000 == 0:
+    if step % 100 == 0:
         print(step, "cost : ", cost_val, "\nPrediction:\n", hyp_val)
 
