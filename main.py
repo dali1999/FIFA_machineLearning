@@ -2,10 +2,10 @@ from numpy import genfromtxt
 import numpy as np
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-stats = genfromtxt('stats.csv', delimiter=',', encoding='utf-8-sig')
+stats = genfromtxt('jeon_stats.csv', delimiter=',', encoding='utf-8-sig')
 print(stats)
 print(stats.shape)
-overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
+overall = genfromtxt('jeon_overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
 print(overall)
 print(overall.shape)
 
@@ -63,6 +63,12 @@ for i in range(stats.shape[0]):
     x8_data.append(stats[i,7])
 print(x8_data)
 
+# #작년시즌 오버롤
+# x9_data = []
+# for i in range(stats.shape[0]):
+#     x9_data.append(stats[i,8])
+# print(x9_data)
+
 x1_data = np.array(x1_data)
 x2_data = np.array(x2_data)
 x3_data = np.array(x3_data)
@@ -71,6 +77,7 @@ x5_data = np.array(x5_data)
 x6_data = np.array(x6_data)
 x7_data = np.array(x7_data)
 x8_data = np.array(x8_data)
+#x9_data = np.array(x9_data)
 
 y_data = np.array(y_data)
 
@@ -82,6 +89,8 @@ x5 = tf.placeholder(tf.float32)
 x6 = tf.placeholder(tf.float32)
 x7 = tf.placeholder(tf.float32)
 x8 = tf.placeholder(tf.float32)
+#x9 = tf.placeholder(tf.float32)
+
 y = tf.placeholder(tf.float32)
 
 w1 = tf.Variable(tf.random_normal([1]), name = 'weight1')
@@ -92,6 +101,7 @@ w5 = tf.Variable(tf.random_normal([1]), name = 'weight5')
 w6 = tf.Variable(tf.random_normal([1]), name = 'weight6')
 w7 = tf.Variable(tf.random_normal([1]), name = 'weight7')
 w8 = tf.Variable(tf.random_normal([1]), name = 'weight8')
+#w9 = tf.Variable(tf.random_normal([1]), name = 'weight9')
 
 b = tf.Variable(tf.random_normal([1]), name = 'bias')
 
@@ -105,7 +115,7 @@ sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 for step in range(2000):
     cost_val, hyp_val, _ = sess.run([cost, hypothesis, train],
-                                    feed_dict={x1:x1_data, x2:x2_data, x3:x3_data, x4:x4_data, x5:x5_data, x6:x6_data, x7:x7_data, x8:x8_data, y:y_data})
+                                    feed_dict={x1:x1_data, x2:x2_data, x3:x3_data, x4:x4_data, x5:x5_data, x6:x6_data, x7:x7_data, x8:x8_data,  y:y_data})
     if step % 100 == 0:
         print(step, "cost : ", cost_val, "\nPrediction:\n", hyp_val)
 
