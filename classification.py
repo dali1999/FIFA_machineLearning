@@ -41,11 +41,12 @@ from keras.datasets import reuters
 
 
 
-stats = genfromtxt('stats.csv', delimiter=',', encoding='utf-8-sig')
+stats = genfromtxt('stats2.csv', delimiter=',', encoding='utf-8-sig',dtype=int)
+stats[:,0]-=70
 print(stats)
 print(stats.shape)  #(688,8)
-overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
-overall = overall - 67
+overall = genfromtxt('overall2.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
+overall = overall - 72
 print(overall)
 print(overall.shape)  #(688,)
 
@@ -53,21 +54,43 @@ overall_encoded = np_utils.to_categorical(overall)
 
 print(overall_encoded)
 
+stats_train=stats[:400]
+stats_val=stats[400:]
+overall_train=overall_encoded[:400]
+overall_val=overall_encoded[400:]
+
+print(stats_train)
+print(overall_train)
 
 model = models.Sequential()
-model.add(layers.Dense(64, input_dim= 8, activation='relu'))
-# model.add(layers.Dense(64, activation='relu'))
-model.add(layers.Dense(26, activation='softmax'))
+model.add(layers.Dense(50, input_dim= 4, activation='relu'))
+model.add(layers.Dense(50, activation='relu'))
+model.add(layers.Dense(50, activation='relu'))
+model.add(layers.Dense(50, activation='relu'))
+model.add(layers.Dense(50, activation='relu'))
+
+model.add(layers.Dense(21, activation='softmax'))
 #
 # model.compile(optimizer='rmsprop',
 #               loss='categorical_crossentropy',
 #               metrics=['accuracy'])
 #
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(stats, overall_encoded, epochs=200, batch_size=1)
-print("\n accuracy : %.4f" %(model.evaluate(stats, overall_encoded)[1]))
+history=model.fit(stats_train, overall_train, epochs=20, batch_size=1, validation_data=(stats_val,overall_val))
+print("\n accuracy : %.4f" %(model.evaluate(stats_train, overall_train)[1]))
 
+loss = history.history['loss']
+val_loss = history.history['val_loss']
 
+epochs = range(1, len(loss) + 1)
+plt.plot(epochs, loss, 'bo', label='Training loss')
+plt.plot(epochs, val_loss, 'b', label='Validation loss')
+plt.title('Training and validation loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.show()
 
 # import tensorflow.compat.v1 as tf
 # tf.disable_v2_behavior()
