@@ -73,11 +73,20 @@ mlr.fit(train_input, train_target)
 pred = mlr.predict(test_input)
 
 import matplotlib.pyplot as plt
+
+# 주택의 면적 'size_sqft'과 가격 'rent'
+plt.xlabel("LastSeason ShotsPerGame ")
+plt.ylabel("OVERALL ")
+plt.scatter(test_input[:,3], test_target , alpha=0.4)
+plt.show()
+"""
 plt.scatter(test_target, pred, alpha=0.4)
 plt.xlabel("Actual ")
 plt.ylabel("Predicted ")
 plt.title("MULTIPLE LINEAR REGRESSION")
 plt.show()
+"""
+
 
 print(mlr.coef_)
 print(mlr.score(train_input, train_target))
