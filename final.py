@@ -4,11 +4,11 @@ import tensorflow.compat.v1 as tf
 import matplotlib.pyplot as plt
 import math
 tf.disable_v2_behavior()
-stats = genfromtxt('jeon_stats.csv', delimiter=',', encoding='utf-8-sig')
+stats = genfromtxt('hwang_stats.csv', delimiter=',', encoding='utf-8-sig')
 print(type(stats))
 print(stats.shape)
 print(stats[0][1])
-overall = genfromtxt('jeon_overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
+overall = genfromtxt('hwang_overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
 print(overall)
 print(overall.shape)
 
@@ -124,7 +124,7 @@ train = optimizer.minimize(cost)
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
-for step in range(200000):
+for step in range(20000):
     cost_val, hyp_val, _ = sess.run([cost, hypothesis, train],
                                     feed_dict={x1:x1_data, x2:x2_data, x3:x3_data, x4:x4_data, x5:x5_data, x6:x6_data, x7:x7_data, x8:x8_data, y:y_data})
     if step % 1000 == 0:
