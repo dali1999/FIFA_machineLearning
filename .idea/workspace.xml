@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9f4cd653-ad94-4e48-a771-aa18e18455f3" name="Changes" comment="">
+    <list default="true" id="6b562df8-441d-413a-a2bc-339e39cc8bbb" name="Default Changelist" comment="taehwan">
       <change beforePath="$PROJECT_DIR$/.idea/FIFA_machineLearning.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FIFA_machineLearning.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/final.py" beforeDir="false" afterPath="$PROJECT_DIR$/final.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hwang_overall.csv" beforeDir="false" afterPath="$PROJECT_DIR$/hwang_overall.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hwang_stats.csv" beforeDir="false" afterPath="$PROJECT_DIR$/hwang_stats.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/newmain.py" beforeDir="false" afterPath="$PROJECT_DIR$/newmain.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,11 +17,15 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2I8KbLMy2X48saptzK2px5cNjhH" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />

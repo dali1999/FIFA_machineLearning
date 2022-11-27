@@ -69,6 +69,9 @@ for i in range(stats.shape[0]):
     x8_data.append(stats[i,7])
 print(x8_data)
 
+
+
+
 x1_train = np.array(x1_data[:400])
 x2_train = np.array(x2_data[:400])
 x3_train = np.array(x3_data[:400])
