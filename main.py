@@ -1,101 +1,115 @@
+import torch
+import torchvision
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+
 from numpy import genfromtxt
 import numpy as np
 import tensorflow.compat.v1 as tf
+import matplotlib.pyplot as plt
+import math
+
 tf.disable_v2_behavior()
-stats = genfromtxt('stats.csv', delimiter=',', encoding='utf-8-sig')
+stats = genfromtxt('hwang_stats.csv', delimiter=',', encoding='utf-8-sig')
 print(type(stats))
 print(stats.shape)
 print(stats[0][1])
-overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
+overall = genfromtxt('hwang_overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
 print(overall)
 print(overall.shape)
 
-#overall
-y_data = []
-for i in range(overall.shape[0]):
-    y_data.append(overall[i])
+stats.shape
+overall.shape
 
-# #작년시즌 오버롤
-x1_data = []
-for i in range(stats.shape[0]):
-    x1_data.append(stats[i,0])
-print(x1_data)
+x_train = torch.FloatTensor(stats[:400])
+y_train = torch.FloatTensor(overall[:400])
+x_test = torch.FloatTensor(stats[400:])
+y_test = torch.FloatTensor(overall[400:])
+
+print(y_test[0])
+
+from torch.utils.data import Dataset
+from sklearn.preprocessing import StandardScaler
+
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
 
 
-#골수 goal
-x2_data = []
-for i in range(stats.shape[0]):
-    x2_data.append(stats[i,1])
-print(x2_data)
+class Net(nn.Module):
+    def __init__(self, num_features):
+        super(Net, self).__init__()
+        self.fc1 = nn.Linear(num_features, 32)
+        self.fc2 = nn.Linear(32, 8)
+        # 마지막 출력층의 Neuron은 1개로 설정
+        self.output = nn.Linear(8, 1)
 
-#어시스트수 assist
-x3_data = []
-for i in range(stats.shape[0]):
-    x3_data.append(stats[i,2])
-print(x3_data)
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.output(x)
+        return x
 
-#spG 경기당 슛
-x4_data = []
-for i in range(stats.shape[0]):
-    x4_data.append(stats[i,3])
-print(x4_data)
 
-#키패스 keypass
-x5_data = []
-for i in range(stats.shape[0]):
-    x5_data.append(stats[i,4])
-print(x5_data)
+model = Net(8)
+# 모델을 device 에 올립니다. (cuda:0 혹은 cpu)
+model.to('cpu')
+model
 
-#드리블성공 dribble
-x6_data = []
-for i in range(stats.shape[0]):
-    x6_data.append(stats[i,5])
-print(x6_data)
+loss_fn = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=0.005)
+num_epoch = 200
 
-#피파울 fouled
-x7_data = []
-for i in range(stats.shape[0]):
-    x7_data.append(stats[i,6])
-print(x7_data)
+# loss 기록하기 위한 list 정의
+losses = []
 
-#명성 reputation
-x8_data = []
-for i in range(stats.shape[0]):
-    x8_data.append(stats[i,7])
-print(x8_data)
+for epoch in range(num_epoch):
+    # loss 초기화
+    running_loss = 0
+    for i in range(len(x_train)):
+        x = x_train[i]
+        y = y_train[i]
+        # x, y 데이터를 device 에 올립니다. (cuda:0 혹은 cpu)
+        x = x.to('cpu')
+        y = y.to('cpu')
 
-from sklearn.model_selection import train_test_split
-train_input, test_input, train_target, test_target = train_test_split(stats, overall, train_size = 0.8, test_size = 0.2, random_state = 42)
-from sklearn.linear_model import LinearRegression
+        # 그라디언트 초기화 (초기화를 수행하지 않으면 계산된 그라디언트는 누적됩니다.)
+        optimizer.zero_grad()
 
-mlr = LinearRegression()
-mlr.fit(train_input, train_target)
-pred = mlr.predict(test_input)
+        # output 계산: model의 __call__() 함수 호출
+        y_hat = model(x)
 
-import matplotlib.pyplot as plt
+        # 손실(loss) 계산
+        loss = loss_fn(y, y_hat)
 
-# 주택의 면적 'size_sqft'과 가격 'rent'
-plt.xlabel("LastSeason ShotsPerGame ")
-plt.ylabel("OVERALL ")
-plt.scatter(test_input[:,3], test_target , alpha=0.4)
+        # 미분 계산
+        loss.backward()
+
+        # 경사하강법 계산 및 적용
+        optimizer.step()
+
+        # 배치별 loss 를 누적합산 합니다.
+        running_loss += loss.item()
+
+    # 누적합산된 배치별 loss값을 배치의 개수로 나누어 Epoch당 loss를 산출합니다.
+    loss = running_loss / len(x_train)
+    losses.append(loss)
+
+    # 20번의 Epcoh당 출력합니다.
+    if epoch % 20 == 0:
+        print("{0:05d} loss = {1:.5f}".format(epoch, loss))
+
+print("----" * 15)
+print("{0:05d} loss = {1:.5f}".format(epoch, loss))
+
+plt.figure(figsize=(14, 6))
+plt.plot(losses[:100], c='darkviolet', linestyle=':')
+
+plt.title('Losses over epoches', fontsize=15)
+plt.xlabel('Epochs')
+plt.ylabel('Error')
 plt.show()
-"""
-plt.scatter(test_target, pred, alpha=0.4)
-plt.xlabel("Actual ")
-plt.ylabel("Predicted ")
-plt.title("MULTIPLE LINEAR REGRESSION")
-plt.show()
-"""
 
 
-print(mlr.coef_)
-print(mlr.score(train_input, train_target))
-print(mlr.score(test_input, test_target))
-
-# from sklearn.preprocessing import PolynomialFeatures
-#
-# poly = PolynomialFeatures(include_bias = False)
-# poly.fit(train_input)
-# train_poly = poly.transform(train_input)
-# print(train_poly.shape)
-#

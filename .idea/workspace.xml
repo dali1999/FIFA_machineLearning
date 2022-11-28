@@ -2,13 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6b562df8-441d-413a-a2bc-339e39cc8bbb" name="Default Changelist" comment="taehwan">
-      <change beforePath="$PROJECT_DIR$/.idea/FIFA_machineLearning.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FIFA_machineLearning.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/final.py" beforeDir="false" afterPath="$PROJECT_DIR$/final.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hwang_overall.csv" beforeDir="false" afterPath="$PROJECT_DIR$/hwang_overall.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hwang_stats.csv" beforeDir="false" afterPath="$PROJECT_DIR$/hwang_stats.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/newmain.py" beforeDir="false" afterPath="$PROJECT_DIR$/newmain.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classification.py" beforeDir="false" afterPath="$PROJECT_DIR$/classification.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hwang_overall.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hwang_stats.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/newmain.py" beforeDir="false" afterPath="$PROJECT_DIR$/MulLinReg.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,15 +29,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true"
+  }
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="9f4cd653-ad94-4e48-a771-aa18e18455f3" name="Changes" comment="" />
       <created>1669557841352</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1669557841352</updated>
     </task>
+    <task id="LOCAL-00001" summary="taehwan">
+      <created>1669559910109</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1669559910109</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -51,5 +63,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="taehwan" />
+    <option name="LAST_COMMIT_MESSAGE" value="taehwan" />
   </component>
 </project>

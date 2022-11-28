@@ -3,9 +3,9 @@ import numpy as np
 from numpy import genfromtxt
 from sklearn.model_selection import train_test_split
 
-stats = genfromtxt('hwang_stats.csv', delimiter=',', encoding='utf-8-sig')
+stats = genfromtxt('stats.csv', delimiter=',', encoding='utf-8-sig')
 print(stats.shape)
-overall = genfromtxt('hwang_overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
+overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
 print(overall.shape[0])
 
 stats_train, stats_test , overall_train, overall_test = train_test_split(stats, overall, train_size = 0.8, test_size = 0.2, random_state = 42)
@@ -13,15 +13,15 @@ stats_train, stats_test , overall_train, overall_test = train_test_split(stats, 
 
 class MulLinearRegression:
   def __init__(self,learning_rate):
-    self.w=None #모델의 weight 벡터 self.w=(w_1,w_2)
-    self.b=None #모델의 bias
-    self.lr=learning_rate #모델의 학습률
-    self.losses=[] #매 에포크마다 손실을 저장하기 위한 리스트
-    self.weight_history=[] #매 에포크마다 계산된 weight를 저장하기 위한 리스트
-    self.bias_history=[] #매 에포크마다 계산된 bias를 저장하기 위한 리스트
+    self.w=None
+    self.b=None
+    self.lr=learning_rate
+    self.losses=[]
+    self.weight_history=[]
+    self.bias_history=[]
 
   def forward(self,x):
-    y_pred=np.sum(x*self.w)+self.b #np.sum함수는 인자로 받은 numpy배열의 모든 원소의 합을 return합니다.
+    y_pred=np.sum(x*self.w)+self.b
     return y_pred
 
   def loss(self,x,y):
@@ -53,7 +53,7 @@ class MulLinearRegression:
       self.b -= self.lr * (b_grad / len(y_data))
 
       print(
-        f'epoch ({epoch + 1}) loss : {l / len(y_data):.4f} | bias : {self.b:.4f}')
+        f'epoch ({epoch + 1}) loss : {l / len(y_data):.4f} ')
       self.losses.append(l / len(y_data))
       self.weight_history.append(self.w)
       self.bias_history.append(self.b)
@@ -69,10 +69,6 @@ class MulLinearRegression:
     acc=count/overall_test[0]
     print(acc)
 
-
-
-
-
 m=MulLinearRegression(learning_rate=0.0001)
-m.fit(stats_train,overall_train,epochs=500)
+m.fit(stats_train,overall_train,epochs=1000)
 m.predict(stats_test,overall_test)
