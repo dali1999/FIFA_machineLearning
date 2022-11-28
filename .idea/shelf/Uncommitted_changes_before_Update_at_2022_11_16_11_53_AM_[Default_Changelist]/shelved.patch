@@ -1,0 +1,119 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from numpy import genfromtxt\nimport numpy as np\nimport tensorflow.compat.v1 as tf\ntf.disable_v2_behavior()\nstats = genfromtxt('stats.csv', delimiter=',', encoding='utf-8-sig')\nprint(stats)\nprint(stats.shape)\noverall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)\nprint(overall)\nprint(overall.shape)\n\n#overall\ny_data = []\nfor i in range(overall.shape[0]):\n    y_data.append(overall[i])\n\n#경기출전수 appearance\nx1_data = []\nfor i in range(stats.shape[0]):\n    x1_data.append(stats[i,0])\nprint(x1_data)\n\n\n#골수 goal\nx2_data = []\nfor i in range(stats.shape[0]):\n    x2_data.append(stats[i,1])\nprint(x2_data)\n\n#어시스트수 assist\nx3_data = []\nfor i in range(stats.shape[0]):\n    x3_data.append(stats[i,2])\nprint(x3_data)\n\n#spG 경기당 슛\nx4_data = []\nfor i in range(stats.shape[0]):\n    x4_data.append(stats[i,3])\nprint(x4_data)\n\n#키패스 keypass\nx5_data = []\nfor i in range(stats.shape[0]):\n    x5_data.append(stats[i,4])\nprint(x5_data)\n\n#드리블성공 dribble\nx6_data = []\nfor i in range(stats.shape[0]):\n    x6_data.append(stats[i,5])\nprint(x6_data)\n\n#피파울 fouled\nx7_data = []\nfor i in range(stats.shape[0]):\n    x7_data.append(stats[i,6])\nprint(x7_data)\n\n#명성 reputation\nx8_data = []\nfor i in range(stats.shape[0]):\n    x8_data.append(stats[i,7])\nprint(x8_data)\n\nx1_data = np.array(x1_data)\nx2_data = np.array(x2_data)\nx3_data = np.array(x3_data)\nx4_data = np.array(x4_data)\nx5_data = np.array(x5_data)\nx6_data = np.array(x6_data)\nx7_data = np.array(x7_data)\nx8_data = np.array(x8_data)\n\ny_data = np.array(y_data)\n\nx1 = tf.placeholder(tf.float32)\nx2 = tf.placeholder(tf.float32)\nx3 = tf.placeholder(tf.float32)\nx4 = tf.placeholder(tf.float32)\nx5 = tf.placeholder(tf.float32)\nx6 = tf.placeholder(tf.float32)\nx7 = tf.placeholder(tf.float32)\nx8 = tf.placeholder(tf.float32)\ny = tf.placeholder(tf.float32)\n\nw1 = tf.Variable(tf.random_normal([1]), name = 'weight1')\nw2 = tf.Variable(tf.random_normal([1]), name = 'weight2')\nw3 = tf.Variable(tf.random_normal([1]), name = 'weight3')\nw4 = tf.Variable(tf.random_normal([1]), name = 'weight4')\nw5 = tf.Variable(tf.random_normal([1]), name = 'weight5')\nw6 = tf.Variable(tf.random_normal([1]), name = 'weight6')\nw7 = tf.Variable(tf.random_normal([1]), name = 'weight7')\nw8 = tf.Variable(tf.random_normal([1]), name = 'weight8')\n\nb = tf.Variable(tf.random_normal([1]), name = 'bias')\n\nhypothesis = x1*w1 + x2*w2 + x3*w3 + x4*w4 + x5*w5 + x6*w6 + x7*w7 + x8*w8 + b\n\ncost = tf.reduce_mean(tf.square(hypothesis-y))\noptimizer = tf.train.GradientDescentOptimizer(learning_rate = 1e-5)\ntrain = optimizer.minimize(cost)\n\nsess = tf.Session()\nsess.run(tf.global_variables_initializer())\nfor step in range(2000):\n    cost_val, hyp_val, _ = sess.run([cost, hypothesis, train],\n                                    feed_dict={x1:x1_data, x2:x2_data, x3:x3_data, x4:x4_data, x5:x5_data, x6:x6_data, x7:x7_data, x8:x8_data, y:y_data})\n    if step % 100 == 0:\n        print(step, \"cost : \", cost_val, \"\\nPrediction:\\n\", hyp_val)\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 726c1d06bc72c25b5b933736c713a4e738a86ec0)
++++ b/main.py	(date 1668429576047)
+@@ -2,10 +2,10 @@
+ import numpy as np
+ import tensorflow.compat.v1 as tf
+ tf.disable_v2_behavior()
+-stats = genfromtxt('stats.csv', delimiter=',', encoding='utf-8-sig')
++stats = genfromtxt('jeon_stats.csv', delimiter=',', encoding='utf-8-sig')
+ print(stats)
+ print(stats.shape)
+-overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
++overall = genfromtxt('jeon_overall.csv', delimiter=',', encoding='utf-8-sig')
+ print(overall)
+ print(overall.shape)
+ 
+Index: classification.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from keras import models\nfrom keras import layers\nimport numpy as np\nfrom numpy import genfromtxt\nimport tensorflow as tf\nimport matplotlib.pyplot as plt\nfrom keras.utils import np_utils\nfrom keras.datasets import reuters\n\n# (train_data, train_labels), (test_data, test_labels) = reuters.load_data(\n#      num_words=10000)\n#\n# print(train_labels[10])\n# print(train_labels.shape)\n# word_index = r\n# euters.get_word_index()\n# reverse_word_index = dict([(value, key) for (key, value) in word_index.items()])\n# decoded_newswire = ' '.join([reverse_word_index.get(i - 3, '?') for i in train_data[0]])\n#\n# def vectorize_sequences(sequences, dimension=10000):\n#     results = np.zeros((len(sequences), dimension))\n#     for i, sequence in enumerate(sequences):\n#         results[i, sequence] = 1.\n#     return results\n#\n# x_train = vectorize_sequences(train_data)\n# x_test = vectorize_sequences(test_data)\n#\n# print(x_train.shape)\n# print(type(x_test))\n# print(x_test.shape)\n\n\n\n\n\n\n\n\n\n\n\n\n\nstats = genfromtxt('stats2.csv', delimiter=',', encoding='utf-8-sig',dtype=int)\nstats[:,0]-=70\nprint(stats)\nprint(stats.shape)  #(688,8)\noverall = genfromtxt('overall2.csv', delimiter=',', encoding='utf-8-sig', dtype=int)\noverall = overall - 72\nprint(overall)\nprint(overall.shape)  #(688,)\n\noverall_encoded = np_utils.to_categorical(overall)\n\nprint(overall_encoded)\n\nstats_train=stats[:400]\nstats_val=stats[400:]\noverall_train=overall_encoded[:400]\noverall_val=overall_encoded[400:]\n\nprint(stats_train)\nprint(overall_train)\n\nmodel = models.Sequential()\nmodel.add(layers.Dense(50, input_dim= 4, activation='relu'))\nmodel.add(layers.Dense(50, activation='relu'))\nmodel.add(layers.Dense(50, activation='relu'))\nmodel.add(layers.Dense(50, activation='relu'))\nmodel.add(layers.Dense(50, activation='relu'))\n\nmodel.add(layers.Dense(21, activation='softmax'))\n#\n# model.compile(optimizer='rmsprop',\n#               loss='categorical_crossentropy',\n#               metrics=['accuracy'])\n#\nmodel.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])\nhistory=model.fit(stats_train, overall_train, epochs=20, batch_size=1, validation_data=(stats_val,overall_val))\nprint(\"\\n accuracy : %.4f\" %(model.evaluate(stats_train, overall_train)[1]))\n\nloss = history.history['loss']\nval_loss = history.history['val_loss']\n\nepochs = range(1, len(loss) + 1)\nplt.plot(epochs, loss, 'bo', label='Training loss')\nplt.plot(epochs, val_loss, 'b', label='Validation loss')\nplt.title('Training and validation loss')\nplt.xlabel('Epochs')\nplt.ylabel('Loss')\nplt.legend()\n\nplt.show()\n\n# import tensorflow.compat.v1 as tf\n# tf.disable_v2_behavior()\n# from keras.models import Sequential\n# stats = genfromtxt('stats.csv', delimiter=',', encoding='utf-8-sig')\n# print(stats)\n# print(stats.shape)\n# overall = genfromtxt('overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)\n# print(overall)\n# print(overall.shape)\n#\n# #overall\n# y_data = []\n# for i in range(overall.shape[0]):\n#     y_data.append(overall[i])\n#\n# #경기출전수 appearance\n# x1_data = []\n# for i in range(stats.shape[0]):\n#     x1_data.append(stats[i,0])\n# print(x1_data)\n#\n#\n# #골수 goal\n# x2_data = []\n# for i in range(stats.shape[0]):\n#     x2_data.append(stats[i,1])\n# print(x2_data)\n#\n# #어시스트수 assist\n# x3_data = []\n# for i in range(stats.shape[0]):\n#     x3_data.append(stats[i,2])\n# print(x3_data)\n#\n# #spG 경기당 슛\n# x4_data = []\n# for i in range(stats.shape[0]):\n#     x4_data.append(stats[i,3])\n# print(x4_data)\n#\n# #키패스 keypass\n# x5_data = []\n# for i in range(stats.shape[0]):\n#     x5_data.append(stats[i,4])\n# print(x5_data)\n#\n# #드리블성공 dribble\n# x6_data = []\n# for i in range(stats.shape[0]):\n#     x6_data.append(stats[i,5])\n# print(x6_data)\n#\n# #피파울 fouled\n# x7_data = []\n# for i in range(stats.shape[0]):\n#     x7_data.append(stats[i,6])\n# print(x7_data)\n#\n# #명성 reputation\n# x8_data = []\n# for i in range(stats.shape[0]):\n#     x8_data.append(stats[i,7])\n# print(x8_data)\n#\n# x1_data = np.array(x1_data)\n# x2_data = np.array(x2_data)\n# x3_data = np.array(x3_data)\n# x4_data = np.array(x4_data)\n# x5_data = np.array(x5_data)\n# x6_data = np.array(x6_data)\n# x7_data = np.array(x7_data)\n# x8_data = np.array(x8_data)\n#\n# y_data = np.array(y_data)\n#\n# x1 = tf.placeholder(tf.float32)\n# x2 = tf.placeholder(tf.float32)\n# x3 = tf.placeholder(tf.float32)\n# x4 = tf.placeholder(tf.float32)\n# x5 = tf.placeholder(tf.float32)\n# x6 = tf.placeholder(tf.float32)\n# x7 = tf.placeholder(tf.float32)\n# x8 = tf.placeholder(tf.float32)\n# y = tf.placeholder(tf.float32)\n#\n# w1 = tf.Variable(tf.random_normal([1]), name = 'weight1')\n# w2 = tf.Variable(tf.random_normal([1]), name = 'weight2')\n# w3 = tf.Variable(tf.random_normal([1]), name = 'weight3')\n# w4 = tf.Variable(tf.random_normal([1]), name = 'weight4')\n# w5 = tf.Variable(tf.random_normal([1]), name = 'weight5')\n# w6 = tf.Variable(tf.random_normal([1]), name = 'weight6')\n# w7 = tf.Variable(tf.random_normal([1]), name = 'weight7')\n# w8 = tf.Variable(tf.random_normal([1]), name = 'weight8')\n#\n# b = tf.Variable(tf.random_normal([1]), name = 'bias')
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/classification.py b/classification.py
+--- a/classification.py	(revision 726c1d06bc72c25b5b933736c713a4e738a86ec0)
++++ b/classification.py	(date 1668429253764)
+@@ -5,6 +5,7 @@
+ import tensorflow as tf
+ import matplotlib.pyplot as plt
+ from keras.utils import np_utils
++from sklearn.model_selection import train_test_split
+ from keras.datasets import reuters
+ 
+ # (train_data, train_labels), (test_data, test_labels) = reuters.load_data(
+@@ -41,12 +42,11 @@
+ 
+ 
+ 
+-
+-stats = genfromtxt('stats2.csv', delimiter=',', encoding='utf-8-sig',dtype=int)
++stats = genfromtxt('jeon_stats.csv', delimiter=',', encoding='utf-8-sig',dtype=float)
+ stats[:,0]-=70
+ print(stats)
+ print(stats.shape)  #(688,8)
+-overall = genfromtxt('overall2.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
++overall = genfromtxt('jeon_overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
+ overall = overall - 72
+ print(overall)
+ print(overall.shape)  #(688,)
+@@ -55,21 +55,27 @@
+ 
+ print(overall_encoded)
+ 
++
++stats_train, stats_val, overall_train, overall_val = train_test_split( stats, overall_encoded, test_size=0.2, random_state=42)
++
++"""
+ stats_train=stats[:400]
+ stats_val=stats[400:]
+ overall_train=overall_encoded[:400]
+ overall_val=overall_encoded[400:]
++"""
+ 
+ print(stats_train)
+ print(overall_train)
+ 
+ model = models.Sequential()
+-model.add(layers.Dense(50, input_dim= 4, activation='relu'))
+-model.add(layers.Dense(50, activation='relu'))
+-model.add(layers.Dense(50, activation='relu'))
+-model.add(layers.Dense(50, activation='relu'))
+-model.add(layers.Dense(50, activation='relu'))
+-
++model.add(layers.Dense(100, input_dim= 4, activation='relu'))
++model.add(layers.Dense(100, activation='relu'))
++model.add(layers.Dense(100, activation='relu'))
++model.add(layers.Dense(100, activation='relu'))
++model.add(layers.Dense(100, activation='relu'))
++model.add(layers.Dense(100, activation='relu'))
++model.add(layers.Dense(100, activation='relu'))
+ model.add(layers.Dense(21, activation='softmax'))
+ #
+ # model.compile(optimizer='rmsprop',
+@@ -77,7 +83,7 @@
+ #               metrics=['accuracy'])
+ #
+ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+-history=model.fit(stats_train, overall_train, epochs=20, batch_size=1, validation_data=(stats_val,overall_val))
++history=model.fit(stats_train, overall_train, epochs=50, batch_size=1, validation_data=(stats_val,overall_val))
+ print("\n accuracy : %.4f" %(model.evaluate(stats_train, overall_train)[1]))
+ 
+ loss = history.history['loss']
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"6b562df8-441d-413a-a2bc-339e39cc8bbb\" name=\"Default Changelist\" comment=\"태환이가 수정한 거\">\n      <change beforePath=\"$PROJECT_DIR$/classification.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/classification.py\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Python Script\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2HWbR1lNOxIq4yaJvP90APVlhqZ\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;\n  }\n}</component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"SvnConfiguration\">\n    <configuration />\n  </component>\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <created>1668403775564</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1668403775564</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"태환이가 수정한 거\">\n      <created>1668416225699</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1668416225699</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"2\" />\n    <servers />\n  </component>\n  <component name=\"Vcs.Log.History.Properties\">\n    <option name=\"COLUMN_ID_ORDER\">\n      <list>\n        <option value=\"Default.Root\" />\n        <option value=\"Default.Author\" />\n        <option value=\"Default.Date\" />\n        <option value=\"Default.Subject\" />\n        <option value=\"Space.CommitStatus\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"태환이가 수정한 거\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"태환이가 수정한 거\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 726c1d06bc72c25b5b933736c713a4e738a86ec0)
++++ b/.idea/workspace.xml	(date 1668507341162)
+@@ -2,7 +2,9 @@
+ <project version="4">
+   <component name="ChangeListManager">
+     <list default="true" id="6b562df8-441d-413a-a2bc-339e39cc8bbb" name="Default Changelist" comment="태환이가 수정한 거">
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/classification.py" beforeDir="false" afterPath="$PROJECT_DIR$/classification.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />

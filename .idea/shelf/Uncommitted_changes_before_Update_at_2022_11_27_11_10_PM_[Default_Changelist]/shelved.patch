@@ -1,0 +1,120 @@
+Index: newmain.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\nimport numpy as np\nfrom numpy import genfromtxt\nfrom sklearn.model_selection import train_test_split\n\nstats = genfromtxt('jeon_stats.csv', delimiter=',', encoding='utf-8-sig')\nprint(stats.shape)\noverall = genfromtxt('jeon_overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)\nprint(overall.shape[0])\n\nstats_train, stats_test , overall_train, overall_test = train_test_split(stats, overall, train_size = 0.8, test_size = 0.2, random_state = 42)\n\n\nclass MultiLinear:\n  def __init__(self,learning_rate=0.001):\n    self.w=None #모델의 weight 벡터 self.w=(w_1,w_2)\n    self.b=None #모델의 bias\n    self.lr=learning_rate #모델의 학습률\n    self.losses=[] #매 에포크마다 손실을 저장하기 위한 리스트\n    self.weight_history=[] #매 에포크마다 계산된 weight를 저장하기 위한 리스트\n    self.bias_history=[] #매 에포크마다 계산된 bias를 저장하기 위한 리스트\n\n  def forward(self,x):\n    y_pred=np.sum(x*self.w)+self.b #np.sum함수는 인자로 받은 numpy배열의 모든 원소의 합을 return합니다.\n    return y_pred\n\n  def loss(self,x,y):\n    y_pred=self.forward(x)\n    return (y_pred-y)**2/overall.shape[0]\n\n  def gradient(self,x,y):\n    y_pred=self.forward(x)\n    w_grad=2*x*(y_pred-y)\n    b_grad=2*(y_pred-y)\n\n    return w_grad,b_grad\n\n  def fit(self, x_data, y_data, epochs=20):\n    self.w = np.ones(8)  # 모델의 weight들을 전부 1로 초기화\n    self.b = 0  # 모델의 bias를 0으로 초기화\n    for epoch in range(epochs):\n      l = 0  # 계산할 손실값\n      w_grad = np.zeros(8)  # weight의 기울기를 누적할 numpy배열\n      b_grad = 0  # bias의 기울기를 누적할 변수\n\n      for x, y in zip(x_data, y_data):\n        l += self.loss(x, y)\n        w_i, b_i = self.gradient(x, y)\n\n        w_grad += w_i  # weight누적\n        b_grad += b_i  # bias누적\n\n      self.w -= self.lr * (w_grad / len(y_data))  # weight 업데이트\n      self.b -= self.lr * (b_grad / len(y_data))  # bias 업데이트\n\n      print(\n        f'epoch ({epoch + 1}) loss : {l / len(y_data):.4f} | bias : {self.b:.4f}')\n      self.losses.append(l / len(y_data))  # 손실값 저장\n      self.weight_history.append(self.w)  # weight 배열 저장\n      self.bias_history.append(self.b)  # bias값 저장\n\n  def predict(self,x_test,y_test):\n    predict=np.zeros(overall_test[0]) #예측값 저장\n    for i in range(overall_test[0]):\n      predict[i]=round(np.sum(self.w*x_test[i]))\n\n\n    count=0\n    for j in range(overall_test[0]):\n      if predict[j]==y_test[j]:\n        count+=1\n    acc=count/overall_test[0]\n    print(acc)\n\n\n\n\n\nmodel=MultiLinear(learning_rate=0.0001)\nmodel.fit(stats_train,overall_train,epochs=600)\nmodel.predict(stats_test,overall_test)
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/newmain.py b/newmain.py
+--- a/newmain.py	(revision 84841b1e13661c6420a4915560f0e5b3c9f56341)
++++ b/newmain.py	(date 1669526904527)
+@@ -5,10 +5,10 @@
+ 
+ stats = genfromtxt('jeon_stats.csv', delimiter=',', encoding='utf-8-sig')
+ print(stats.shape)
+-overall = genfromtxt('jeon_overall.csv', delimiter=',', encoding='utf-8-sig', dtype=int)
++overall = genfromtxt('jeon_overall.csv', delimiter=',', encoding='utf-8-sig')
+ print(overall.shape[0])
+ 
+-stats_train, stats_test , overall_train, overall_test = train_test_split(stats, overall, train_size = 0.8, test_size = 0.2, random_state = 42)
++stats_train, stats_test , overall_train, overall_test = train_test_split(stats, overall, train_size = 0.6, test_size = 0.4, random_state = 42)
+ 
+ 
+ class MultiLinear:
+@@ -63,13 +63,11 @@
+     predict=np.zeros(overall_test[0]) #예측값 저장
+     for i in range(overall_test[0]):
+       predict[i]=round(np.sum(self.w*x_test[i]))
+-
+-
+     count=0
+     for j in range(overall_test[0]):
+       if predict[j]==y_test[j]:
+         count+=1
+-    acc=count/overall_test[0]
++    acc=count/overall_test[0] #정확도
+     print(acc)
+ 
+ 
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"6b562df8-441d-413a-a2bc-339e39cc8bbb\" name=\"Default Changelist\" comment=\"jeon\">\n      <change afterPath=\"$PROJECT_DIR$/final.py\" afterDir=\"false\" />\n      <change afterPath=\"$PROJECT_DIR$/newmain.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/LR_class.py\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/jeon_overall.csv\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/jeon_overall.csv\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/jeon_stats.csv\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/jeon_stats.csv\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/main.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main.py\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/new.csv\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/new_overall.csv\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/new_stats.csv\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/overall.csv\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/overall2.csv\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/stats.csv\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/stats2.csv\" beforeDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Python Script\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n    <option name=\"UPDATE_TYPE\" value=\"REBASE\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2HWbR1lNOxIq4yaJvP90APVlhqZ\" />\n  <component name=\"ProjectLevelVcsManager\">\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\n  </component>\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"ASKED_ADD_EXTERNAL_FILES\": \"true\",\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"settings.editor.selected.configurable\": \"com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable\"\n  }\n}]]></component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"SvnConfiguration\">\n    <configuration />\n  </component>\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <created>1668403775564</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1668403775564</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"태환이가 수정한 거\">\n      <created>1668416225699</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1668416225699</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"linearregression 클래스 파일 추가\">\n      <created>1669014665913</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1669014665913</updated>\n    </task>\n    <task id=\"LOCAL-00003\" summary=\"linearregression 클래스 파일 추가\">\n      <created>1669014774766</created>\n      <option name=\"number\" value=\"00003\" />\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1669014774766</updated>\n    </task>\n    <task id=\"LOCAL-00004\" summary=\"2\">\n      <created>1669015047361</created>\n      <option name=\"number\" value=\"00004\" />\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1669015047361</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"5\" />\n    <servers />\n  </component>\n  <component name=\"Vcs.Log.History.Properties\">\n    <option name=\"COLUMN_ID_ORDER\">\n      <list>\n        <option value=\"Default.Root\" />\n        <option value=\"Default.Author\" />\n        <option value=\"Default.Date\" />\n        <option value=\"Default.Subject\" />\n        <option value=\"Space.CommitStatus\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <option name=\"ADD_EXTERNAL_FILES_SILENTLY\" value=\"true\" />\n    <MESSAGE value=\"태환이가 수정한 거\" />\n    <MESSAGE value=\"linearregression 클래스 파일 추가\" />\n    <MESSAGE value=\"2\" />\n    <MESSAGE value=\"jeon\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"jeon\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 84841b1e13661c6420a4915560f0e5b3c9f56341)
++++ b/.idea/workspace.xml	(date 1669449720122)
+@@ -1,21 +1,9 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ChangeListManager">
+-    <list default="true" id="6b562df8-441d-413a-a2bc-339e39cc8bbb" name="Default Changelist" comment="jeon">
+-      <change afterPath="$PROJECT_DIR$/final.py" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/newmain.py" afterDir="false" />
++    <list default="true" id="6b562df8-441d-413a-a2bc-339e39cc8bbb" name="Default Changelist" comment="taehwan">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/LR_class.py" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/jeon_overall.csv" beforeDir="false" afterPath="$PROJECT_DIR$/jeon_overall.csv" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/jeon_stats.csv" beforeDir="false" afterPath="$PROJECT_DIR$/jeon_stats.csv" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/new.csv" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/new_overall.csv" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/new_stats.csv" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/overall.csv" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/overall2.csv" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/stats.csv" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/stats2.csv" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/newmain.py" beforeDir="false" afterPath="$PROJECT_DIR$/newmain.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -44,14 +32,14 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "ASKED_ADD_EXTERNAL_FILES": "true",
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="SvnConfiguration">
+     <configuration />
+@@ -91,7 +79,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1669015047361</updated>
+     </task>
+-    <option name="localTasksCounter" value="5" />
++    <task id="LOCAL-00005" summary="taehwan">
++      <created>1669449000488</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1669449000488</updated>
++    </task>
++    <option name="localTasksCounter" value="6" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.History.Properties">
+@@ -122,6 +117,7 @@
+     <MESSAGE value="linearregression 클래스 파일 추가" />
+     <MESSAGE value="2" />
+     <MESSAGE value="jeon" />
+-    <option name="LAST_COMMIT_MESSAGE" value="jeon" />
++    <MESSAGE value="taehwan" />
++    <option name="LAST_COMMIT_MESSAGE" value="taehwan" />
+   </component>
+ </project>
+\ No newline at end of file
